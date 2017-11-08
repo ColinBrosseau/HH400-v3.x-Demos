@@ -3,4 +3,13 @@ package "histomode"
 purpose "Measure a histogram with the HydraHarp 400."
 
 # Options
-option "filename" f "Output filename" string default="histomode.dat" optional
+option "Filename" f "Output filename" string default="histomode.dat" optional
+option "Duration" d "Duration of acquisition (second)" float default="1" optional
+option "Binning" b "Binning" int default="0" optional
+option "SyncDivider" - "Sync Divider" int default="1" optional
+option "SyncCFDZeroCross" - "SyncCFDZeroCross" int default="10" optional
+option "SyncCFDLevel" - "Sync CFD Level" int default="50" optional
+option "SyncChannelOffset" - "Sync Channel Offset" int default="0" optional
+option "InputCFDZeroCross" - "Input CFD Zero Cross" int default="10" optional
+option "InputCFDLevel" - "Input CFD Level" int default="50" optional
+option "InputChannelOffset" - "Input Channel Offset" int default="0" optional

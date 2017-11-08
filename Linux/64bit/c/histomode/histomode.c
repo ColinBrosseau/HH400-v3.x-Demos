@@ -47,12 +47,33 @@ unsigned int counts[HHMAXINPCHAN][MAXHISTLEN];
 int main(int argc, char* argv[])
 {
 
-  struct gengetopt_args_info ai;
-  if (cmdline_parser(argc, argv, &ai) != 0) {
-    printf("KKK\n");
-    exit(1);
-  }
-  printf("ai.filename_arg: %s\n", ai.filename_arg);
+ struct gengetopt_args_info ai;
+ if (cmdline_parser(argc, argv, &ai) != 0) {
+   exit(1);
+ }
+
+ // Get command line options
+ char* filename = ai.Filename_arg; // output filename
+ int Tacq = (int)(ai.Duration_arg*1000); // Measurement time (millisec)
+ int Binning = ai.Binning_arg; 
+ int SyncDivider = ai.SyncDivider_arg; ; 
+ int SyncCFDZeroCross = ai.SyncCFDZeroCross_arg; // (mV)
+ int SyncCFDLevel = ai.SyncCFDLevel_arg; // (mV)
+ int SyncChannelOffset = ai.SyncChannelOffset_arg; // (ps)
+ int InputCFDZeroCross = ai.InputCFDZeroCross_arg; // (mV)
+ int InputCFDLevel = ai.InputCFDLevel_arg; // (mV)
+ int InputChannelOffset = ai.InputChannelOffset_arg; // (ps)  
+
+ printf("Filename: %s\n", filename);
+ printf("Duration (ms): %d\n", Tacq);
+ printf("Binning: %d\n", Binning);
+ printf("SyncDivider: %d\n", SyncDivider);
+ printf("SyncCFDZeroCross: %d\n", SyncCFDZeroCross);
+ printf("SyncCFDLevel: %d\n", SyncCFDLevel);
+ printf("SyncChannelOffset: %d\n", SyncChannelOffset);
+ printf("InputCFDZeroCross: %d\n", InputCFDZeroCross);
+ printf("InputCFDLevel: %d\n", InputCFDLevel);
+ printf("InputChannelOffset: %d\n", InputChannelOffset);
   
  int dev[MAXDEVNUM];
  int found=0;
@@ -67,16 +88,7 @@ int main(int argc, char* argv[])
  char Errorstring[40];
  int NumChannels;
  int HistLen;
- int Binning=0; //you can change this
  int Offset=0;
- int Tacq=1000; //Measurement time in millisec, you can change this
- int SyncDivider = 1; //you can change this
- int SyncCFDZeroCross=10; //you can change this (in mV)
- int SyncCFDLevel=50; //you can change this (in mV)
- int SyncChannelOffset=-5000; //you can change this (in ps, like a cable delay)
- int InputCFDZeroCross=10; //you can change this (in mV)
- int InputCFDLevel=50; //you can change this (in mV)
- int InputChannelOffset=0; //you can change this (in ps, like a cable delay)
  double Resolution;
  int Syncrate;
  int Countrate;
@@ -95,7 +107,7 @@ int main(int argc, char* argv[])
  if(strncmp(LIB_Version,LIB_VERSION,sizeof(LIB_VERSION))!=0)
          printf("\nWarning: The application was built for version %s.",LIB_VERSION);
 
- if((fpout=fopen(ai.filename_arg, "w"))==NULL)
+ if((fpout=fopen(filename, "w"))==NULL)
  {
         printf("\ncannot open output file\n");
         goto ex;
