@@ -1,0 +1,6 @@
+version "0.1"
+package "histomode"
+purpose "Measure a histogram with the HydraHarp 400."
+
+# Options
+option "filename" f "Output filename" string default="histomode.dat" optional

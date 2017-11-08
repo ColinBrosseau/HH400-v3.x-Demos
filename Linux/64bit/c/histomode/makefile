@@ -23,7 +23,7 @@ CFLAGS = $(WARN) $(COPTS)
 # Variables
 
 BINS = histomode
-SRCS = histomode.c
+SRCS = histomode.c cmdline.c
 OBJS = $(SRCS:%.c=%.o)
 
 # Main target
@@ -32,12 +32,15 @@ all: $(BINS)
 
 # Dependencies
 
-histomode: histomode.o
+histomode: cmdline.c histomode.o cmdline.o 
 	$(CC) $(OBJS) $(LPATH)hhlib.so -o $@
+
+cmdline.c: histomode.cmdline
+	gengetopt --input=$< --include-getopt
 
 # Misc
 
 clean:
-	rm -f *.o *~ ~* *.bck core
+	rm -f *.o *~ ~* *.bck core cmdline.c cmdline.h
 	rm -f $(BINS)
 

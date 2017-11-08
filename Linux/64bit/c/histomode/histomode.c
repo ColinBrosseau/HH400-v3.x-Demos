@@ -39,6 +39,7 @@
 #include "hhlib.h"
 #include "errorcodes.h"
 
+#include "cmdline.h"
 
 unsigned int counts[HHMAXINPCHAN][MAXHISTLEN];
 
@@ -46,9 +47,16 @@ unsigned int counts[HHMAXINPCHAN][MAXHISTLEN];
 int main(int argc, char* argv[])
 {
 
- int dev[MAXDEVNUM]; 
+  struct gengetopt_args_info ai;
+  if (cmdline_parser(argc, argv, &ai) != 0) {
+    printf("KKK\n");
+    exit(1);
+  }
+  printf("ai.filename_arg: %s\n", ai.filename_arg);
+  
+ int dev[MAXDEVNUM];
  int found=0;
- FILE *fpout;   
+ FILE *fpout;
  int retcode;
  int ctcstatus;
  char LIB_Version[8];
@@ -60,19 +68,19 @@ int main(int argc, char* argv[])
  int NumChannels;
  int HistLen;
  int Binning=0; //you can change this
- int Offset=0; 
+ int Offset=0;
  int Tacq=1000; //Measurement time in millisec, you can change this
- int SyncDivider = 1; //you can change this 
+ int SyncDivider = 1; //you can change this
  int SyncCFDZeroCross=10; //you can change this (in mV)
  int SyncCFDLevel=50; //you can change this (in mV)
  int SyncChannelOffset=-5000; //you can change this (in ps, like a cable delay)
  int InputCFDZeroCross=10; //you can change this (in mV)
  int InputCFDLevel=50; //you can change this (in mV)
  int InputChannelOffset=0; //you can change this (in ps, like a cable delay)
- double Resolution; 
+ double Resolution;
  int Syncrate;
  int Countrate;
- double Integralcount; 
+ double Integralcount;
  int i,j;
  int flags;
  int warnings;
@@ -87,9 +95,9 @@ int main(int argc, char* argv[])
  if(strncmp(LIB_Version,LIB_VERSION,sizeof(LIB_VERSION))!=0)
          printf("\nWarning: The application was built for version %s.",LIB_VERSION);
 
- if((fpout=fopen("histomode.out","w"))==NULL)
+ if((fpout=fopen(ai.filename_arg, "w"))==NULL)
  {
-        printf("\ncannot open output file\n"); 
+        printf("\ncannot open output file\n");
         goto ex;
  }
 
@@ -109,7 +117,7 @@ int main(int argc, char* argv[])
 
  for(i=0;i<MAXDEVNUM;i++)
  {
-	retcode = HH_OpenDevice(i, HW_Serial); 
+	retcode = HH_OpenDevice(i, HW_Serial);
 	if(retcode==0) //Grab any HydraHarp we can open
 	{
 		printf("\n  %1d        S/N %s", i, HW_Serial);
@@ -120,7 +128,7 @@ int main(int argc, char* argv[])
 	{
 		if(retcode==HH_ERROR_DEVICE_OPEN_FAIL)
 			printf("\n  %1d        no device", i);
-		else 
+		else
 		{
 			HH_GetErrorString(Errorstring, retcode);
 			printf("\n  %1d        %s", i,Errorstring);
@@ -130,13 +138,13 @@ int main(int argc, char* argv[])
 
  //In this demo we will use the first HydraHarp device we find, i.e. dev[0].
  //You can also use multiple devices in parallel.
- //You can also check for specific serial numbers, so that you always know 
+ //You can also check for specific serial numbers, so that you always know
  //which physical device you are talking to.
 
  if(found<1)
  {
 	printf("\nNo device available.");
-	goto ex; 
+	goto ex;
  }
  printf("\nUsing device #%1d",dev[0]);
  printf("\nInitializing the device...");
@@ -160,7 +168,7 @@ int main(int argc, char* argv[])
 	printf("\nFound Model %s Part no %s Version %s",HW_Model,HW_Partno,HW_Version);
 
 
- retcode = HH_GetNumOfInputChannels(dev[0],&NumChannels); 
+ retcode = HH_GetNumOfInputChannels(dev[0],&NumChannels);
  if(retcode<0)
  {
         printf("\nHH_GetNumOfInputChannels error %d. Aborted.\n",retcode);
@@ -302,7 +310,7 @@ int main(int argc, char* argv[])
 
  fflush(stdout);
 	 
- HH_ClearHistMem(dev[0]);            
+ HH_ClearHistMem(dev[0]);
  if(retcode<0)
    {
      printf("\nHH_ClearHistMem error %d. Aborted.\n",retcode);
@@ -330,7 +338,7 @@ int main(int argc, char* argv[])
 
  //here you could check for warnings again
         
- retcode = HH_StartMeas(dev[0],Tacq); 
+ retcode = HH_StartMeas(dev[0],Tacq);
  if(retcode<0)
    {
      printf("\nHH_StartMeas error %d. Aborted.\n",retcode);
@@ -400,6 +408,7 @@ ex:
  printf("\nExit");
  //getchar();
 
+ 
  return 0;
 }
 
