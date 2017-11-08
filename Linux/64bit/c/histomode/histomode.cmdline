@@ -3,7 +3,7 @@ package "histomode"
 purpose "Measure a histogram with the HydraHarp 400."
 
 # Options
-option "Filename" f "Output filename" string optional
+option "Filename" f "Output filename" string default="stdout" optional
 option "Duration" d "Duration of acquisition (second)" float default="1" optional
 option "Binning" b "Binning" int default="0" optional
 option "SyncDivider" - "Sync Divider" int default="1" optional

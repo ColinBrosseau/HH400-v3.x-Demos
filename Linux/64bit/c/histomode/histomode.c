@@ -77,6 +77,7 @@ int main(int argc, char* argv[])
    printf("InputCFDLevel: %d\n", InputCFDLevel);
    printf("InputChannelOffset: %d\n", InputChannelOffset);
  }
+   
   
  int dev[MAXDEVNUM];
  int found=0;
@@ -100,25 +101,22 @@ int main(int argc, char* argv[])
  int flags;
  int warnings;
  char warningstext[16384]; //must have 16384 bytest text buffer
- char cmd=0;
 
  HH_GetLibraryVersion(LIB_Version);
 if (filename_given){
   printf("\nHydraHarp 400 HHLib.DLL Demo Application    M. Wahl, PicoQuant GmbH, 2014");
   printf("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
   printf("\nLibrary version is %s",LIB_Version);
+  if(strncmp(LIB_Version,LIB_VERSION,sizeof(LIB_VERSION))!=0)
+    printf("\nWarning: The application was built for version %s.",LIB_VERSION);
  }
- if(strncmp(LIB_Version,LIB_VERSION,sizeof(LIB_VERSION))!=0)
-   if (filename_given){
-         printf("\nWarning: The application was built for version %s.",LIB_VERSION);
-   }
 
- if((fpout=fopen(filename, "w"))==NULL)
- {
-   if (filename_given){
-     printf("\ncannot open output file\n");
-   }
-        goto ex;
+ if (filename_given){
+   if((fpout=fopen(filename, "w"))==NULL)
+     {
+       printf("\ncannot open output file\n");
+       goto ex;
+     }
  }
 
  if (filename_given){
@@ -139,17 +137,15 @@ if (filename_given){
    printf("\nDevidx     Status");
  }
 
-
  for(i=0;i<MAXDEVNUM;i++)
  {
 	retcode = HH_OpenDevice(i, HW_Serial);
 	if(retcode==0) //Grab any HydraHarp we can open
 	{
-	   if (filename_given){
+	   if (filename_given)
 		printf("\n  %1d        S/N %s", i, HW_Serial);
-	   }
-		dev[found]=i; //keep index to devices we want to use
-		found++;
+	   dev[found]=i; //keep index to devices we want to use
+	   found++;
 	}
 	else
 	{
@@ -164,7 +160,7 @@ if (filename_given){
 	    }
 	}
  }
-
+ 
  //In this demo we will use the first HydraHarp device we find, i.e. dev[0].
  //You can also use multiple devices in parallel.
  //You can also check for specific serial numbers, so that you always know
@@ -172,10 +168,9 @@ if (filename_given){
 
  if(found<1)
  {
-    if (filename_given){
+    if (filename_given)
 	printf("\nNo device available.");
-    }
-	goto ex;
+    goto ex;
  }
 
  if (filename_given){
@@ -188,47 +183,42 @@ if (filename_given){
  retcode = HH_Initialize(dev[0],MODE_HIST,0);  //Histo mode with internal clock
  if(retcode<0)
  {
-    if (filename_given){
-        printf("\nHH_Initialize error %d. Aborted.\n",retcode);
-    }
-        goto ex;
+    if (filename_given)
+      printf("\nHH_Initialize error %d. Aborted.\n",retcode);
+    goto ex;
  }
  
  retcode = HH_GetHardwareInfo(dev[0],HW_Model,HW_Partno,HW_Version); //this is is only for information
  if(retcode<0)
  {
-    if (filename_given){
-        printf("\nHH_GetHardwareInfo error %d. Aborted.\n",retcode);
-    }
-        goto ex;
+    if (filename_given)
+      printf("\nHH_GetHardwareInfo error %d. Aborted.\n",retcode);
+    goto ex;
  }
  else
-   if (filename_given){
-	printf("\nFound Model %s Part no %s Version %s",HW_Model,HW_Partno,HW_Version);
-   }
+   if (filename_given)
+     printf("\nFound Model %s Part no %s Version %s",HW_Model,HW_Partno,HW_Version);
 
  retcode = HH_GetNumOfInputChannels(dev[0],&NumChannels);
  if(retcode<0)
  {
-   if (filename_given){
-        printf("\nHH_GetNumOfInputChannels error %d. Aborted.\n",retcode);
-   }
-        goto ex;
+   if (filename_given)
+     printf("\nHH_GetNumOfInputChannels error %d. Aborted.\n",retcode);
+   goto ex;
  }
  else
-   if (filename_given){
+   if (filename_given)
 	printf("\nDevice has %i input channels.",NumChannels);
-   }
  fflush(stdout);
  
- printf("\nCalibrating...");
+ if (filename_given)
+   printf("\nCalibrating...");
  retcode=HH_Calibrate(dev[0]);
  if(retcode<0)
  {
-   if (filename_given){
-        printf("\nCalibration Error %d. Aborted.\n",retcode);
-   }
-        goto ex;
+   if (filename_given)
+     printf("\nCalibration Error %d. Aborted.\n",retcode);
+   goto ex;
  }
 
  fflush(stdout);
@@ -236,28 +226,25 @@ if (filename_given){
  retcode = HH_SetSyncDiv(dev[0],SyncDivider);
  if(retcode<0)
  {
-   if (filename_given){
-        printf("\nPH_SetSyncDiv error %d. Aborted.\n",retcode);
-   }
-        goto ex;
+   if (filename_given)
+     printf("\nPH_SetSyncDiv error %d. Aborted.\n",retcode);
+   goto ex;
  }
 
  retcode=HH_SetSyncCFD(dev[0],SyncCFDLevel,SyncCFDZeroCross);
  if(retcode<0)
  {
-   if (filename_given){
-        printf("\nHH_SetSyncCFD error %d. Aborted.\n",retcode);
-   }
-        goto ex;
+   if (filename_given)
+     printf("\nHH_SetSyncCFD error %d. Aborted.\n",retcode);
+   goto ex;
  }
 
  retcode = HH_SetSyncChannelOffset(dev[0],SyncChannelOffset);
  if(retcode<0)
  {
-   if (filename_given){
-        printf("\nHH_SetSyncChannelOffset error %d. Aborted.\n",retcode);
-   }
-        goto ex;
+   if (filename_given)
+     printf("\nHH_SetSyncChannelOffset error %d. Aborted.\n",retcode);
+   goto ex;
  }
 
  for(i=0;i<NumChannels;i++) // we use the same input settings for all channels, you can change this
@@ -265,19 +252,17 @@ if (filename_given){
 	 retcode=HH_SetInputCFD(dev[0],i,InputCFDLevel,InputCFDZeroCross);
 	 if(retcode<0)
 	 {
-	   if (filename_given){
-			printf("\nHH_SetInputCFD error %d. Aborted.\n",retcode);
-	   }
-			goto ex;
+	   if (filename_given)
+	     printf("\nHH_SetInputCFD error %d. Aborted.\n",retcode);
+	   goto ex;
 	 }
 
 	 retcode = HH_SetInputChannelOffset(dev[0],i,InputChannelOffset);
 	 if(retcode<0)
 	 {
-	   if (filename_given){
-			printf("\nHH_SetInputChannelOffset error %d. Aborted.\n",retcode);
-	   }
-			goto ex;
+	   if (filename_given)
+	     printf("\nHH_SetInputChannelOffset error %d. Aborted.\n",retcode);
+	   goto ex;
 	 }
  }
 
@@ -285,38 +270,35 @@ if (filename_given){
  retcode = HH_SetHistoLen(dev[0], MAXLENCODE, &HistLen);
  if(retcode<0)
  {
-   if (filename_given){
-        printf("\nHH_SetHistoLen error %d. Aborted.\n",retcode);
-   }
-        goto ex;
+   if (filename_given)
+     printf("\nHH_SetHistoLen error %d. Aborted.\n",retcode);
+   goto ex;
  }
- printf("\nHistogram length is %d",HistLen);
+ if (filename_given)
+   printf("\nHistogram length is %d",HistLen);
 
  retcode = HH_SetBinning(dev[0],Binning);
  if(retcode<0)
  {
-   if (filename_given){
-        printf("\nHH_SetBinning error %d. Aborted.\n",retcode);
-   }
-        goto ex;
+   if (filename_given)
+     printf("\nHH_SetBinning error %d. Aborted.\n",retcode);
+   goto ex;
  }
 
  retcode = HH_SetOffset(dev[0],Offset);
  if(retcode<0)
  {
-   if (filename_given){
-        printf("\nHH_SetOffset error %d. Aborted.\n",retcode);
-   }
-        goto ex;
+   if (filename_given)
+     printf("\nHH_SetOffset error %d. Aborted.\n",retcode);
+   goto ex;
  }
  
  retcode = HH_GetResolution(dev[0], &Resolution);
  if(retcode<0)
  {
-   if (filename_given){
-        printf("\nHH_GetResolution error %d. Aborted.\n",retcode);
-   }
-        goto ex;
+   if (filename_given)
+     printf("\nHH_GetResolution error %d. Aborted.\n",retcode);
+   goto ex;
  }
 
  if (filename_given)
@@ -331,57 +313,51 @@ if (filename_given){
  retcode = HH_GetSyncRate(dev[0], &Syncrate);
  if(retcode<0)
  {
-   if (filename_given){
-        printf("\nHH_GetSyncRate error %d. Aborted.\n",retcode);
-   }
-        goto ex;
+   if (filename_given)
+     printf("\nHH_GetSyncRate error %d. Aborted.\n",retcode);
+   goto ex;
  }
- if (filename_given){
+ if (filename_given)
    printf("\nSyncrate=%1d/s", Syncrate);
- }
 
  for(i=0;i<NumChannels;i++) // for all channels
  {
 	 retcode = HH_GetCountRate(dev[0],i,&Countrate);
 	 if(retcode<0)
 	 {
-	   if (filename_given){
-			printf("\nHH_GetCountRate error %d. Aborted.\n",retcode);
-	   }
-			goto ex;
+	   if (filename_given)
+	     printf("\nHH_GetCountRate error %d. Aborted.\n",retcode);
+	   goto ex;
 	 }
-	 if (filename_given){
+	 if (filename_given)
 	   printf("\nCountrate[%1d]=%1d/s", i, Countrate);
-	 }
  }
 
- printf("\n");
+ if (filename_given)
+   printf("\n");
 
  //new from v1.2: after getting the count rates you can check for warnings
  retcode = HH_GetWarnings(dev[0],&warnings);
  if(retcode<0)
  {
-   if (filename_given){
-	printf("\nHH_GetWarnings error %d. Aborted.\n",retcode);
-   }
-	goto ex;
+   if (filename_given)
+     printf("\nHH_GetWarnings error %d. Aborted.\n",retcode);
+   goto ex;
  }
  if(warnings)
  {
 	 HH_GetWarningsText(dev[0],warningstext, warnings);
-	 if (filename_given){
+	 if (filename_given)
 	   printf("\n\n%s",warningstext);
-	 }
  }
 	 
 
  retcode = HH_SetStopOverflow(dev[0],0,10000); //for example only
  if(retcode<0)
  {
-   if (filename_given){
-        printf("\nHH_SetStopOverflow error %d. Aborted.\n",retcode);
-   }
-        goto ex;
+   if (filename_given)
+     printf("\nHH_SetStopOverflow error %d. Aborted.\n",retcode);
+   goto ex;
  }
 
  fflush(stdout);
@@ -389,37 +365,32 @@ if (filename_given){
  HH_ClearHistMem(dev[0]);
  if(retcode<0)
    {
-     if (filename_given){
+     if (filename_given)
        printf("\nHH_ClearHistMem error %d. Aborted.\n",retcode);
-     }
      goto ex;
    }
 
  retcode = HH_GetSyncRate(dev[0], &Syncrate);
  if(retcode<0)
    {
-     if (filename_given){
+     if (filename_given)
        printf("\nHH_GetSyncRate error %d. Aborted.\n",retcode);
-     }
      goto ex;
    }
- if (filename_given){
+ if (filename_given)
    printf("\nSyncrate=%1d/s", Syncrate);
- }
 
  for(i=0;i<NumChannels;i++) // for all channels
    {
      retcode = HH_GetCountRate(dev[0],i,&Countrate);
      if(retcode<0)
        {
-	 if (filename_given){
+	 if (filename_given)
 	   printf("\nHH_GetCountRate error %d. Aborted.\n",retcode);
-	 }
 	 goto ex;
        }
-     if (filename_given){
+     if (filename_given)
        printf("\nCountrate[%1d]=%1d/s", i, Countrate);
-     }
    }
 
  //here you could check for warnings again
@@ -427,15 +398,13 @@ if (filename_given){
  retcode = HH_StartMeas(dev[0],Tacq);
  if(retcode<0)
    {
-     if (filename_given){
+     if (filename_given)
        printf("\nHH_StartMeas error %d. Aborted.\n",retcode);
-     }
      goto ex;
    }
 
- if (filename_given){
+ if (filename_given)
    printf("\n\nMeasuring for %1d milliseconds...",Tacq);
- }
         
  ctcstatus=0;
  while(ctcstatus==0)
@@ -443,9 +412,8 @@ if (filename_given){
      retcode = HH_CTCStatus(dev[0], &ctcstatus);
      if(retcode<0)
        {
-	 if (filename_given){
+	 if (filename_given)
 	   printf("\nHH_StartMeas error %d. Aborted.\n",retcode);
-	 }
 	 goto ex;
        }
    }
@@ -453,23 +421,21 @@ if (filename_given){
  retcode = HH_StopMeas(dev[0]);
  if(retcode<0)
    {
-     if (filename_given){
+     if (filename_given)
        printf("\nHH_StopMeas error %1d. Aborted.\n",retcode);
-     }
      goto ex;
    }
 
- if (filename_given){
+ if (filename_given)
    printf("\n");
- }
+ 
  for(i=0;i<NumChannels;i++) // for all channels
    {
      retcode = HH_GetHistogram(dev[0],counts[i],i,0);
      if(retcode<0)
        {
-	 if (filename_given){
+	 if (filename_given)
 	   printf("\nHH_GetHistogram error %1d. Aborted.\n",retcode);
-	 }
 	 goto ex;
        }
 
@@ -477,40 +443,47 @@ if (filename_given){
      for(j=0;j<HistLen;j++)
        Integralcount+=counts[i][j];
 
-     if (filename_given){
+     if (filename_given)
        printf("\n  Integralcount[%1d]=%1.0lf",i,Integralcount);
-     }
-
    }
- if (filename_given){
+ if (filename_given)
    printf("\n");
- }
 
  retcode = HH_GetFlags(dev[0], &flags);
  if(retcode<0)
    {
-     if (filename_given){
+     if (filename_given)
        printf("\nHH_GetFlags error %1d. Aborted.\n",flags);
-     }
      goto ex;
    }
 
- if (filename_given){
+ if (filename_given)
    if(flags&FLAG_OVERFLOW) printf("\n  Overflow.");
- }
  
  for(j=0;j<HistLen;j++)
  {
 	for(i=0;i<NumChannels;i++)
-         fprintf(fpout,"%5d ",counts[i][j]);
-	fprintf(fpout,"\n");
+	  if (filename_given)
+	    fprintf(fpout,"%5d ",counts[i][j]);
+	  else
+	    printf("%5d ",counts[i][j]);
+	    
+	if (filename_given)
+	  fprintf(fpout,"\n");
+	else
+	  printf("\n");
  }
+ 
+ if (filename_given)
+   fprintf(fpout,"\n");
+
 ex:
  for(i=0;i<MAXDEVNUM;i++) //no harm to close all
  {
 	HH_CloseDevice(i);
  }
- if(fpout) fclose(fpout);
+ if(fpout)
+   fclose(fpout);
  
  return 0;
 }
