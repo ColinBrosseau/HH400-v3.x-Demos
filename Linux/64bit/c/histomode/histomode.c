@@ -169,7 +169,6 @@ int main(int argc, char* argv[])
  else
 	printf("\nDevice has %i input channels.",NumChannels);
 
-
  fflush(stdout);
  
  printf("\nCalibrating...");
@@ -301,101 +300,90 @@ int main(int argc, char* argv[])
         goto ex;
  }
 
- while(cmd!='q')
- { 
-
-	fflush(stdout);
+ fflush(stdout);
 	 
-        HH_ClearHistMem(dev[0]);            
-        if(retcode<0)
-		{
-          printf("\nHH_ClearHistMem error %d. Aborted.\n",retcode);
-          goto ex;
-		}
+ HH_ClearHistMem(dev[0]);            
+ if(retcode<0)
+   {
+     printf("\nHH_ClearHistMem error %d. Aborted.\n",retcode);
+     goto ex;
+   }
 
-        printf("\npress RETURN to start measurement");
-        getchar();
+ retcode = HH_GetSyncRate(dev[0], &Syncrate);
+ if(retcode<0)
+   {
+     printf("\nHH_GetSyncRate error %d. Aborted.\n",retcode);
+     goto ex;
+   }
+ printf("\nSyncrate=%1d/s", Syncrate);
 
-        retcode = HH_GetSyncRate(dev[0], &Syncrate);
-        if(retcode<0)
-		{
-          printf("\nHH_GetSyncRate error %d. Aborted.\n",retcode);
-          goto ex;
-		}
-        printf("\nSyncrate=%1d/s", Syncrate);
+ for(i=0;i<NumChannels;i++) // for all channels
+   {
+     retcode = HH_GetCountRate(dev[0],i,&Countrate);
+     if(retcode<0)
+       {
+	 printf("\nHH_GetCountRate error %d. Aborted.\n",retcode);
+	 goto ex;
+       }
+     printf("\nCountrate[%1d]=%1d/s", i, Countrate);
+   }
 
-        for(i=0;i<NumChannels;i++) // for all channels
-		{
-	      retcode = HH_GetCountRate(dev[0],i,&Countrate);
-	      if(retcode<0)
-		  {
-			printf("\nHH_GetCountRate error %d. Aborted.\n",retcode);
-			goto ex;
-		  }
-	      printf("\nCountrate[%1d]=%1d/s", i, Countrate);
-		}
-
-		//here you could check for warnings again
+ //here you could check for warnings again
         
-        retcode = HH_StartMeas(dev[0],Tacq); 
-        if(retcode<0)
-        {
-                printf("\nHH_StartMeas error %d. Aborted.\n",retcode);
-                goto ex;
-        }
+ retcode = HH_StartMeas(dev[0],Tacq); 
+ if(retcode<0)
+   {
+     printf("\nHH_StartMeas error %d. Aborted.\n",retcode);
+     goto ex;
+   }
          
-        printf("\n\nMeasuring for %1d milliseconds...",Tacq);
+ printf("\n\nMeasuring for %1d milliseconds...",Tacq);
         
-		ctcstatus=0;
-		while(ctcstatus==0)
-		{
-		  retcode = HH_CTCStatus(dev[0], &ctcstatus);
-          if(retcode<0)
-		  {
-                printf("\nHH_StartMeas error %d. Aborted.\n",retcode);
-                goto ex;
-		  }
-		}
+ ctcstatus=0;
+ while(ctcstatus==0)
+   {
+     retcode = HH_CTCStatus(dev[0], &ctcstatus);
+     if(retcode<0)
+       {
+	 printf("\nHH_StartMeas error %d. Aborted.\n",retcode);
+	 goto ex;
+       }
+   }
          
-        retcode = HH_StopMeas(dev[0]);
-        if(retcode<0)
-        {
-                printf("\nHH_StopMeas error %1d. Aborted.\n",retcode);
-                goto ex;
-        }
+ retcode = HH_StopMeas(dev[0]);
+ if(retcode<0)
+   {
+     printf("\nHH_StopMeas error %1d. Aborted.\n",retcode);
+     goto ex;
+   }
         
-		printf("\n");
-		for(i=0;i<NumChannels;i++) // for all channels
-		{
-          retcode = HH_GetHistogram(dev[0],counts[i],i,0);
-          if(retcode<0)
-		  {
-                printf("\nHH_GetHistogram error %1d. Aborted.\n",retcode);
-                goto ex;
-		  }
+ printf("\n");
+ for(i=0;i<NumChannels;i++) // for all channels
+   {
+     retcode = HH_GetHistogram(dev[0],counts[i],i,0);
+     if(retcode<0)
+       {
+	 printf("\nHH_GetHistogram error %1d. Aborted.\n",retcode);
+	 goto ex;
+       }
 
-		  Integralcount = 0;
-		  for(j=0;j<HistLen;j++)
-			Integralcount+=counts[i][j];
+     Integralcount = 0;
+     for(j=0;j<HistLen;j++)
+       Integralcount+=counts[i][j];
         
-          printf("\n  Integralcount[%1d]=%1.0lf",i,Integralcount);
+     printf("\n  Integralcount[%1d]=%1.0lf",i,Integralcount);
 
-		}
-		printf("\n");
+   }
+ printf("\n");
 
-        retcode = HH_GetFlags(dev[0], &flags);
-        if(retcode<0)
-        {
-                printf("\nHH_GetFlags error %1d. Aborted.\n",flags);
-                goto ex;
-        }
+ retcode = HH_GetFlags(dev[0], &flags);
+ if(retcode<0)
+   {
+     printf("\nHH_GetFlags error %1d. Aborted.\n",flags);
+     goto ex;
+   }
         
-        if(flags&FLAG_OVERFLOW) printf("\n  Overflow.");
-
-        printf("\nEnter c to continue or q to quit and save the count data.");
-        cmd=getchar();
-		getchar();
- }
+ if(flags&FLAG_OVERFLOW) printf("\n  Overflow.");
  
  for(j=0;j<HistLen;j++)
  {
@@ -409,8 +397,8 @@ ex:
 	HH_CloseDevice(i);
  }
  if(fpout) fclose(fpout);
- printf("\npress RETURN to exit");
- getchar();
+ printf("\nExit");
+ //getchar();
 
  return 0;
 }
