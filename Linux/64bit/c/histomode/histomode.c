@@ -462,16 +462,23 @@ if (filename_given){
  
  for(j=0;j<HistLen;j++)
  {
-	for(i=0;i<NumChannels;i++)
-	  if (filename_given)
-	    fprintf(fpout,"%5d ",counts[i][j]);
-	  else
-	    printf("%5d ",counts[i][j]);
-	    
-	if (filename_given)
-	  fprintf(fpout,"\n");
-	else
-	  printf("\n");
+
+   i = 0;
+   if (filename_given)
+     fprintf(fpout,"%5d",counts[i][j]);
+   else
+     printf("%d",counts[i][j]);
+   
+   for(i=1;i<NumChannels;i++)
+     if (filename_given)
+       fprintf(fpout,",%5d",counts[i][j]);
+     else
+       printf(",%d",counts[i][j]);
+   
+   if (filename_given)
+     fprintf(fpout,"\n");
+   else
+     printf("\n");
  }
  
  if (filename_given)
