@@ -2,7 +2,16 @@
 Latest version Version 3.0.0.1 
 PicoQuant GmbH - April 2015 
 
-Get the lateste install here: http://www.picoquant.com/dl_software/HydraHarp400/HydraHarp400_SW_and_DLL_v3_0_0_1.zip
+Get the latest install here: http://www.picoquant.com/dl_software/HydraHarp400/HydraHarp400_SW_and_DLL_v3_0_0_1.zip
+
+## About this fork
+
+This repo is a for from the vendor's code. Its purpose it to extend the histogram code for Linux 64 bits.
+
+Modifications from original version:
+* Remove user interactivity
+* All parameters can be passed by command line (with default values)
+* If no output filename is given, output results go to stdout (without any experiment description).
 
 ## Introduction
 

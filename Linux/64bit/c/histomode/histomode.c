@@ -90,13 +90,13 @@ int main(int argc, char* argv[])
  char HW_Version[8];
  char HW_Serial[8];
  char Errorstring[40];
- int NumChannels;
- int HistLen;
+ int NumChannels;  // number of installed input channels 
+ int HistLen;  // current length (time bin count) of histograms
  int Offset=0;
- double Resolution;
- int Syncrate;
- int Countrate;
- double Integralcount;
+ double Resolution;  // resolution at the current binning (histogram bin width) in ps
+ int Syncrate;  // current sync rate
+ int Countrate; // current count rate of an input channel  
+ double Integralcount;  // total counts (summed over time) of a channel
  int i,j;
  int flags;
  int warnings;
