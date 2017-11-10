@@ -6,7 +6,7 @@ Get the latest install here: http://www.picoquant.com/dl_software/HydraHarp400/H
 
 ## About this fork
 
-This repo is a for from the vendor's code. Its purpose it to extend the histogram code for Linux 64 bits.
+This repo is a fork from the vendor's code. Its purpose it to extend the c histogram code for Linux 64 bits.
 
 Modifications from original version:
 * Remove user interactivity
