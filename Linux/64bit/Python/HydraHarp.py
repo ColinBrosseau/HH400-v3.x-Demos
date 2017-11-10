@@ -3,6 +3,24 @@ import pandas as pd
 from subprocess import check_output
 from io import StringIO
 
+#TODO
+#    Add parameters on histo
+#        Duration
+#        Binning
+#        SyncDivider
+#        SyncCFDZeroCross
+#        SyncCFDLevel
+#        SyncChannelOffset
+#        InputCFDZeroCross
+#        InputCFDLevel
+#        InputChannelOffset        
+#    Read detectors caracteristics (binning, time resolution) from the compiled c code ?
+#        Need to change the c code
+#            Output the time resolution
+#            Output all the same parameters than from the "save in file" version ?
+#    Compute a time axis ?
+#        Need to change the c code (time resolution)
+
 def histo():
     """
     Return the array containing the histogram of all available channels.
